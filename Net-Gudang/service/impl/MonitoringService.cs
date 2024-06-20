@@ -5,7 +5,7 @@ namespace Net_Gudang.service.impl;
 
 public class MonitoringService : IMonitoringService
 {
-    public List<Barang> MonitoringBarang(string namaGudang, DateTime? expiredDate)
+    public List<Barang> MonitoringBarang(string? namaGudang, DateTime? expiredDate)
     {
         using SqlConnection conn = new SqlConnection(ConnectionString.ConnectionUrl);
         var query =
@@ -15,8 +15,9 @@ public class MonitoringService : IMonitoringService
             "WHERE (@NamaGudang IS NULL OR g.NamaGudang = @NamaGudang) " +
             "AND (@ExpiredDate IS NULL OR b.ExpiredBarang <= @ExpiredDate)";
         SqlCommand cmd = new SqlCommand(query, conn);
-        cmd.Parameters.AddWithValue("@NamaGudang", namaGudang);
-        cmd.Parameters.AddWithValue("@ExpiredDate", expiredDate!);
+        Console.WriteLine(expiredDate);
+        cmd.Parameters.AddWithValue("@NamaGudang", (object)namaGudang! ?? DBNull.Value);
+        cmd.Parameters.AddWithValue("@ExpiredDate", (object)expiredDate! ?? DBNull.Value);
         conn.Open();
         SqlDataReader reader = cmd.ExecuteReader();
         List<Barang> listBarang = new List<Barang>();
